@@ -1,15 +1,24 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal, engine
-from app.models import Base, User, Timesheet, TimesheetEntry, TimesheetPeriods
+from app.models import Base, TimesheetPeriods
 from app.database import engine, SessionLocal
-from app.schemas import UserSchema, TimesheetSchema, TimesheetEntrySchema
+from app.routers import timesheets, timeEntry, projects, projectLines
 import datetime
-import bcrypt
+from fastapi.middleware.cors import CORSMiddleware
 
-Base.metadata.drop_all(bind=engine)
+
+#Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with specific origins for production
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow POST, GET, etc.
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
@@ -72,53 +81,14 @@ def fill_periods():
 fill_periods()
     
 
+app.include_router(timesheets.router)
+app.include_router(timeEntry.router)
+app.include_router(projects.router)
+app.include_router(projectLines.router)
+
 @app.get("/")
 async def home():
     return {"message": "Hello World"}
-
-@app.post('/timesheets/create')
-async def add_timesheet(request: TimesheetSchema, db: Session = Depends(get_db)):
-    new_timesheet = Timesheet(
-        user_id=request.user_id,
-        month=request.month,
-        year=request.year,
-        status=request.status, 
-        created_at=request.created_at, 
-        updated_at=request.updated_at
-    )
-
-    db.add(new_timesheet)
-    db.commit()
-    db.refresh(new_timesheet)
-    return new_timesheet
-
-@app.post('/timesheets/delete/{timesheet_id}')
-async def delete_timesheet(timesheet_id: int, db: Session = Depends(get_db)):
-    timesheet = db.query(Timesheet).filter(Timesheet.id == timesheet_id).first()
-    if timesheet is None:
-        raise HTTPException(status_code=404, detail="Timesheet not found")
-    db.delete(timesheet)
-    db.commit()
-    return timesheet
-
-
-@app.get('/timesheets')
-async def get_timesheets(db: Session = Depends(get_db)):
-    return db.query(Timesheet).all()
-
-
-@app.get('/timesheets/details/{timesheet_id}')
-async def get_timesheet(timesheet_id: int, db: Session = Depends(get_db)):
-    timesheet = db.query(Timesheet).filter(Timesheet.id == timesheet_id).first()
-    entries = db.query(TimesheetEntry).filter(TimesheetEntry.timesheet_id == timesheet_id).all()
-
-    merged = {
-        "timesheet": timesheet,
-        "entries": entries
-    }
-    if timesheet is None:
-        raise HTTPException(status_code=404, detail="Timesheet not found")
-    return merged
 
 @app.get('/periods')
 async def get_periods(db: Session = Depends(get_db)):

@@ -14,25 +14,24 @@ class TimesheetSchema(BaseModel):
     created_at: str
     updated_at: str
 
-class KantaProjectSchema(BaseModel):
-    name: str
-    is_active: int
-    created_at: str
-    updated_at: str
-
-class BondProjectSchema(BaseModel):
-    name: str
-    is_active: int
-    created_at: str
-    updated_at: str
+class ProjectSchema(BaseModel):
+    project_id: int | None = None
+    user_id: int | None = None
+    project_name: str | None = None
+    project_status: str | None = None
+    project_details: str | None = None
 
 class TimesheetEntrySchema(BaseModel):
-    timesheet_id: int
-    bond_project_id: int
-    kantata_project_id: int
-    zendesk_ticket: str
-    note: str
-    entry_date: str
-    time: int
-    created_at: str
-    updated_at: str
+    timesheet_id: int | None = None
+    user_id: int | None = None
+    project_id: int | None = None
+    project_line_id: int | None = None
+    ticket: str | None = None
+    time_spent: int | None = None
+    notes: str | None = None
+
+class ProjectLineSchema(BaseModel):
+    line_id: int | None = None
+    project_id: int
+    line_name: str | None = None
+    line_details: str | None = None
