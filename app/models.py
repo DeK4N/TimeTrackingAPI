@@ -19,39 +19,41 @@ class Timesheet(Base):
     created_at = Column(String, index=True)
     updated_at = Column(String, index=True)
 
-class KantataProject(Base):
-    __tablename__ = "kantata_project"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    is_active = Column(Integer, index=True)
-    created_at = Column(String, index=True)
-    updated_at = Column(String, index=True)
-
-class BondProject(Base):
-    __tablename__ = "bond_project"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    is_active = Column(Integer, index=True)
-    created_at = Column(String, index=True)
-    updated_at = Column(String, index=True)
-
 class TimesheetEntry(Base):
     __tablename__ = "timesheet_entry"
     id = Column(Integer, primary_key=True, index=True)
     timesheet_id = Column(Integer, index=True)
-    bond_project_id = Column(Integer, index=True)
-    kantata_project_id = Column(Integer, index=True)
-    zendesk_ticket = Column(String, index=True)
-    note = Column(String, index=True)
-    entry_date = Column(String, index=True)
-    time = Column(Integer, index=True)
-    created_at = Column(String, index=True)
-    updated_at = Column(String, index=True)
+    user_id = Column(Integer, index=True)
+    project_id = Column(Integer, index=True)
+    project_line_id = Column(Integer, index=True)
+    ticket = Column(String, index=True)
+    time_spent = Column(Integer, index=True)
+    notes = Column(String, index=True)
 
 class TimesheetPeriods(Base):
     __tablename__ = "timesheet_periods"
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)
     month_id = Column(Integer, index=True)
     start_date = Column(String, index=True)
     end_date = Column(String, index=True)
     created_at = Column(String, index=True)
+
+class Project(Base):
+    __tablename__ = "project"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)
+    project_name = Column(String, index=True)
+    project_status = Column(String, index=True)
+    project_details = Column(String, index=True)
+    created_at = Column(String, index=True)
+    updated_at = Column(String, index=True)
+
+class ProjectLine(Base):
+    __tablename__ = 'project_line'
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, index=True)
+    line_name = Column(String, index=True)
+    line_details = Column(String, index=True)
+    created_at = Column(String, index=True)
+    updated_at = Column(String, index=True)
