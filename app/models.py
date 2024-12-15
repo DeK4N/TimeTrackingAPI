@@ -29,6 +29,9 @@ class TimesheetEntry(Base):
     ticket = Column(String, index=True)
     time_spent = Column(Integer, index=True)
     notes = Column(String, index=True)
+    date = Column(String, index=True)
+    created_at = Column(String, index=True)
+    updated_at = Column(String, index=True)
 
 class TimesheetPeriods(Base):
     __tablename__ = "timesheet_periods"
