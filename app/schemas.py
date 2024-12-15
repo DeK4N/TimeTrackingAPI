@@ -29,9 +29,26 @@ class TimesheetEntrySchema(BaseModel):
     ticket: str | None = None
     time_spent: int | None = None
     notes: str | None = None
+    date: str | None = None
+    
+    class Config:
+        orm_mode = True
+
+class TimesheetEntrySaveSchema(BaseModel):
+    id: int
+    project_id: int | None = None
+    project_line_id: int | None = None
+    ticket: str | None = None
+    time_spent: int | None = None
+    notes: str | None = None
+    date: str | None = None
 
 class ProjectLineSchema(BaseModel):
     line_id: int | None = None
     project_id: int
     line_name: str | None = None
     line_details: str | None = None
+
+class FieldUpdate(BaseModel):
+    field_name: str
+    value: str
